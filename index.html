@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Nexus · Premium Chat</title>
+  <meta name="description" content="Nexus — Modern real-time messaging platform" />
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#3b82f6" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Nexus" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <link rel="icon" type="image/png" href="icon-192.png" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════
+     INTRO — Task 2 Branding
+     ════════════════════════════════════════════ -->
+<div id="intro-screen">
+  <div class="intro-welcome">Welcome</div>
+  <div class="intro-logo">Nexus</div>
+  <div class="intro-tagline">Real-time messaging, reimagined</div>
+  <div class="intro-byline">Built by <span>Saurav Aka indian_zord</span></div>
+  <div class="intro-loader"></div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     AUTH SCREEN
+     ════════════════════════════════════════════ -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-brand">
+      <h1>Nexus</h1>
+      <p>Sign in to start messaging</p>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login">Sign In</button>
+      <button class="auth-tab" id="tab-signup">Create Account</button>
+    </div>
+
+    <div class="auth-form" id="form-login">
+      <div class="field-group">
+        <label>Email</label>
+        <input type="email" id="login-email" placeholder="you@example.com" autocomplete="email" />
+      </div>
+      <div class="field-group">
+        <label>Password</label>
+        <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" />
+      </div>
+      <div class="auth-error" id="login-error"></div>
+      <button class="btn-primary" id="login-btn">Sign In</button>
+    </div>
+
+    <div class="auth-form hidden" id="form-signup">
+      <div class="field-group">
+        <label>Full Name</label>
+        <input type="text" id="signup-name" placeholder="Jane Doe" autocomplete="name" />
+      </div>
+      <div class="field-group">
+        <label>Email</label>
+        <input type="email" id="signup-email" placeholder="you@example.com" autocomplete="email" />
+      </div>
+      <div class="field-group">
+        <label>Password</label>
+        <input type="password" id="signup-pass" placeholder="Min. 6 characters" autocomplete="new-password" />
+      </div>
+      <div class="auth-error" id="signup-error"></div>
+      <button class="btn-primary" id="signup-btn">Create Account</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     APP SHELL
+     ════════════════════════════════════════════ -->
+<div id="app-screen">
+
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-top">
+        <!-- Task 2: Brand + rotating subtitle -->
+        <div class="sidebar-brand-wrap">
+          <span class="sidebar-brand">Nexus</span>
+          <div class="sidebar-rotator-slot">
+            <span id="header-rotator"></span>
+          </div>
+        </div>
+        <div class="sidebar-actions">
+          <button class="icon-btn" title="New Chat">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="search-box">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+        </svg>
+        <input type="text" id="search-input" placeholder="Search people…" />
+      </div>
+    </div>
+
+    <div class="section-label">People</div>
+    <div class="user-list" id="user-list"></div>
+
+    <div class="sidebar-footer">
+      <div class="avatar sm" id="self-avatar">?</div>
+      <div class="user-info">
+        <div class="user-name" id="self-name">—</div>
+        <div class="user-status" id="self-status">Connecting…</div>
+      </div>
+      <button class="logout-btn" id="logout-btn">Sign out</button>
+    </div>
+
+    <!-- Task 2: Footer branding -->
+    <div class="app-footer">
+      Built by <span>Saurav Aka indian_zord</span>
+    </div>
+  </aside>
+
+  <!-- ── Chat Area ── -->
+  <main class="chat-area" id="chat-area">
+
+    <!-- Empty state -->
+    <div id="chat-empty" class="chat-empty">
+      <div class="empty-icon">
+        <svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="#3b82f6" stroke-width="1.5">
+          <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+        </svg>
+      </div>
+      <h3>No conversation open</h3>
+      <p>Select a person to start chatting</p>
+    </div>
+
+    <!-- Active chat view -->
+    <div id="chat-view" class="chat-view">
+
+      <!-- Chat header -->
+      <div class="chat-header">
+        <button class="mobile-back-btn" id="mobile-back-btn" title="Back">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path d="M19 12H5M12 5l-7 7 7 7"/>
+          </svg>
+        </button>
+
+        <div class="avatar" id="chat-header-avatar">?</div>
+
+        <!-- Task 7: typing status added under name -->
+        <div class="user-info">
+          <div class="user-name" id="chat-header-name">—</div>
+          <div class="user-status" id="chat-header-status">Offline</div>
+          <div id="chat-typing-status"></div>
+        </div>
+
+        <div class="call-controls">
+          <button class="call-btn" id="voice-call-btn" title="Voice call">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.02 1.18 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/>
+            </svg>
+          </button>
+          <button class="call-btn" id="video-call-btn" title="Video call">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <polygon points="23 7 16 12 23 17 23 7"/>
+              <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+            </svg>
+          </button>
+          <button class="call-btn" title="More">
+            <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+              <circle cx="12" cy="5" r="1.5"/>
+              <circle cx="12" cy="12" r="1.5"/>
+              <circle cx="12" cy="19" r="1.5"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Messages -->
+      <div class="messages-container" id="messages-container">
+        <!-- Task 7: animated typing bubble -->
+        <div class="typing-indicator" id="typing-indicator">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>
+      </div>
+
+      <!-- Input -->
+      <div class="chat-input-area">
+        <div class="input-row">
+          <input type="text" id="msg-input" placeholder="Write a message…" autocomplete="off" inputmode="text" />
+          <div class="input-actions">
+            <button class="input-icon-btn" title="Emoji">
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M8 13s1.5 2 4 2 4-2 4-2"/>
+                <line x1="9" y1="9" x2="9.01" y2="9" stroke-width="3" stroke-linecap="round"/>
+                <line x1="15" y1="9" x2="15.01" y2="9" stroke-width="3" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <button class="send-btn" id="send-btn" title="Send">
+              <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <line x1="22" y1="2" x2="11" y2="13"/>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /chat-view -->
+  </main>
+
+</div><!-- /app-screen -->
+
+<!-- ════════════════════════════════════════════
+     TASK 8 — INCOMING CALL MODAL
+     ════════════════════════════════════════════ -->
+<div class="incoming-call-modal" id="incoming-call-modal">
+  <span class="incoming-type-icon" id="incoming-call-type-icon">📞</span>
+  <div class="incoming-label">Incoming Call</div>
+  <div id="incoming-caller-name">Someone</div>
+  <div class="incoming-call-btns">
+    <button class="call-accept-btn" id="accept-call-btn">Accept</button>
+    <button class="call-reject-btn" id="reject-call-btn">Decline</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     CALL OVERLAY
+     ════════════════════════════════════════════ -->
+<div class="call-overlay" id="call-overlay">
+
+  <!-- VOICE CALL -->
+  <div class="voice-call-ui" id="voice-call-ui">
+    <div class="call-avatar-ring">
+      <div class="call-avatar-inner" id="call-avatar">?</div>
+    </div>
+    <div class="call-name" id="call-name">—</div>
+    <div class="call-status" id="call-status">Calling…</div>
+    <div class="call-timer" id="call-timer">00:00</div>
+    <div class="call-controls-row">
+      <!-- Task 8 / 9: IDs wired to mic/cam toggle logic -->
+      <button class="ctrl-btn" id="mic-toggle-btn" title="Mute mic">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/>
+          <path d="M19 10v2a7 7 0 01-14 0v-2"/>
+          <line x1="12" y1="19" x2="12" y2="23"/>
+          <line x1="8" y1="23" x2="16" y2="23"/>
+        </svg>
+      </button>
+      <button class="ctrl-btn end" id="end-call-btn" title="End call">
+        <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path d="M10.68 13.31a16 16 0 003.41 2.6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 013.07 9.81 19.79 19.79 0 01.02 1.18 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91"/>
+          <line x1="23" y1="1" x2="1" y2="23" stroke-width="2"/>
+        </svg>
+      </button>
+      <button class="ctrl-btn" title="Speaker">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+          <path d="M15.54 8.46a5 5 0 010 7.07"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- VIDEO CALL -->
+  <div class="video-call-ui" id="video-call-ui" style="display:none;">
+    <div class="video-main">
+      <!-- Task 8: real <video> elements for WebRTC streams -->
+      <video id="remote-video" autoplay playsinline></video>
+      <video id="local-video"  autoplay playsinline muted></video>
+      <div class="video-main-text" id="call-status-v">Connecting…</div>
+    </div>
+    <div class="video-controls">
+      <button class="ctrl-btn" id="mic-toggle-btn" title="Mute mic">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/>
+          <path d="M19 10v2a7 7 0 01-14 0v-2"/>
+          <line x1="12" y1="19" x2="12" y2="23"/>
+          <line x1="8" y1="23" x2="16" y2="23"/>
+        </svg>
+      </button>
+      <button class="ctrl-btn" id="cam-toggle-btn" title="Toggle camera">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <polygon points="23 7 16 12 23 17 23 7"/>
+          <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+        </svg>
+      </button>
+      <button class="ctrl-btn end" id="end-call-btn-v" title="End call">
+        <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path d="M10.68 13.31a16 16 0 003.41 2.6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 013.07 9.81 19.79 19.79 0 01.02 1.18 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91"/>
+          <line x1="23" y1="1" x2="1" y2="23" stroke-width="2"/>
+        </svg>
+      </button>
+      <button class="ctrl-btn" title="Share screen">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="3" width="20" height="14" rx="2"/>
+          <line x1="8" y1="21" x2="16" y2="21"/>
+          <line x1="12" y1="17" x2="12" y2="21"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+</div><!-- /call-overlay -->
+
+<!-- ════════════════════════════════════════════
+     PWA Install Banner (Task 1)
+     ════════════════════════════════════════════ -->
+<div id="pwa-banner">
+  <img src="icon-192.png" class="pwa-icon" alt="Nexus" />
+  <div class="pwa-text">
+    <strong>Install Nexus</strong>
+    <span>Add to home screen for the best experience</span>
+  </div>
+  <button class="pwa-install-btn" id="pwa-install-btn">Install</button>
+  <button class="pwa-close-btn" id="pwa-close-btn">✕</button>
+</div>
+
+<!-- Toast -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- Service Worker -->
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js')
+      .then(r => console.log('[SW] Ready:', r.scope))
+      .catch(e => console.warn('[SW] Failed:', e));
+  });
+}
+</script>
+
+<script type="module" src="script.js"></script>
+</body>
+</html>
